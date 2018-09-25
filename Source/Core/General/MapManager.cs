@@ -363,6 +363,8 @@ namespace CodeImp.DoomBuilder
 			this.maploading = true; //mxd
 			this.options = options;
 
+            bool isUDMF = filepathname.EndsWith(".udmf");
+
 			General.WriteLogLine("Opening map \"" + options.CurrentName + "\" with configuration \"" + options.ConfigFile + "\"");
 
 			// Initiate graphics
@@ -400,8 +402,15 @@ namespace CodeImp.DoomBuilder
 
 			// Now open the map file
 			General.WriteLogLine("Opening source file: " + filepathname);
+
+            if (isUDMF)
+            {
+
+            }
+            else
+            {
 #if DEBUG
-			mapwad = new WAD(filepathname, true);
+                mapwad = new WAD(filepathname, true);
 #else
 			try { mapwad = new WAD(filepathname, true); } catch(Exception e) 
 			{
@@ -410,12 +419,14 @@ namespace CodeImp.DoomBuilder
 			}
 #endif
 
-			// Copy the map lumps to the temp file
-			General.WriteLogLine("Copying map lumps to temporary file...");
-			CopyLumpsByType(mapwad, options.CurrentName, tempwadreader.WadFile, TEMP_MAP_HEADER, REPLACE_TARGET_MAP, true, true, true, true);
+                // Copy the map lumps to the temp file
+                General.WriteLogLine("Copying map lumps to temporary file...");
+                CopyLumpsByType(mapwad, options.CurrentName, tempwadreader.WadFile, TEMP_MAP_HEADER, REPLACE_TARGET_MAP, true, true, true, true);
 
-			// Close the map file
-			mapwad.Dispose();
+                // Close the map file
+                mapwad.Dispose();
+
+            }
 
 			//mxd. Create MapSet
 			bool maprestored;

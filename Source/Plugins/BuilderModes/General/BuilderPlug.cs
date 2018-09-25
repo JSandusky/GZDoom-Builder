@@ -22,7 +22,9 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using CodeImp.DoomBuilder.Actions;
 using CodeImp.DoomBuilder.BuilderModes.Interface;
 using CodeImp.DoomBuilder.BuilderModes.IO;
@@ -736,6 +738,98 @@ namespace CodeImp.DoomBuilder.BuilderModes
 		#endregion
 
 		#region ================== Actions (mxd)
+
+        [BeginAction("exporttoxml")]
+        private void ExportToXml()
+        {
+            if (General.Map.Map.Sectors.Count == 0)
+            {
+                General.Interface.DisplayStatus(StatusType.Warning, "XML export failed. Map has no sectors!");
+                return;
+            }
+
+            XmlSettingsForm form = new XmlSettingsForm(General.Map.Map.Sectors.Count);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                GdxExport.MapWriter w = new GdxExport.MapWriter();
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.Encoding = Encoding.ASCII;
+                settings.IndentChars = ("\t");
+                settings.OmitXmlDeclaration = true;
+
+                XmlWriter xml = XmlWriter.Create(form.FilePath + ".xml", settings);
+                w.write(General.Map.Options.LevelName, General.Map.Map, xml);
+                xml.Flush();
+                xml.Close();
+
+                List<string> texList = new List<String>();
+                List<int> thingList = new List<int>();
+
+                foreach (Sidedef side in General.Map.Map.Sidedefs)
+                {
+                    if (!side.LowTexture.Equals("-"))
+                    {
+                        if (!texList.Contains(side.LowTexture))
+                            texList.Add(side.LowTexture);
+                    }
+                    if (!side.HighTexture.Equals("-"))
+                    {
+                        if (!texList.Contains(side.HighTexture))
+                            texList.Add(side.HighTexture);
+                    }
+                    if (!side.MiddleTexture.Equals("-"))
+                    {
+                        if (!texList.Contains(side.MiddleTexture))
+                            texList.Add(side.MiddleTexture);
+                    }
+                }
+
+                foreach (Sector sector in General.Map.Map.Sectors)
+                {
+                    if (!sector.FloorTexture.Equals("-"))
+                    {
+                        if (!texList.Contains(sector.FloorTexture))
+                            texList.Add(sector.FloorTexture);
+                    }
+                    if (!sector.CeilTexture.Equals("-"))
+                    {
+                        if (!texList.Contains(sector.CeilTexture))
+                            texList.Add(sector.CeilTexture);
+                    }
+                }
+
+                foreach (CodeImp.DoomBuilder.Map.Thing t in General.Map.Map.Things)
+                {
+                    if (!thingList.Contains(t.Type))
+                        thingList.Add(t.Type);
+                }
+
+                xml = XmlWriter.Create(form.FilePath + ".tex", settings);
+                xml.WriteStartElement("resources");
+                xml.WriteStartElement("textures");
+                foreach (string str in texList)
+                {
+                    xml.WriteElementString("tex", str);
+                }
+                xml.WriteEndElement();
+                xml.WriteStartElement("things");
+                StringBuilder sb = new StringBuilder();
+                bool added = false;
+                foreach (int type in thingList)
+                {
+                    if (added)
+                        sb.Append(",");
+                    added = true;
+                    sb.Append(type.ToString());
+                }
+                xml.WriteString(sb.ToString());
+                xml.WriteEndElement();
+                xml.WriteEndElement();
+                xml.Flush();
+                xml.Close();
+            }
+        }
 
 		[BeginAction("exporttoobj")]
 		private void ExportToObj() 
