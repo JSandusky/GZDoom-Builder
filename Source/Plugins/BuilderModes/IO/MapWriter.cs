@@ -54,17 +54,17 @@ namespace GdxExport
                 }
                 writer.WriteElementString("sides", sb.ToString());
 
-                sb = new StringBuilder();
-                anyWritten = false;
-                foreach (var vert in s.FlatVertices)
-                {
-                    int idx = map.Vertices.FirstOrDefault(v => v.Position == new Vector2D(vert.x, vert.y)).Index;
-                    if (anyWritten)
-                        sb.Append(",");
-                    sb.Append(idx.ToString());
-                }
-                if (anyWritten)
-                    writer.WriteElementString("tris", sb.ToString());
+                //sb = new StringBuilder();
+                //anyWritten = false;
+                //foreach (var vert in s.FlatVertices)
+                //{
+                //    int idx = map.Vertices.FirstOrDefault(v => v.Position == new Vector2D(vert.x, vert.y)).Index;
+                //    if (anyWritten)
+                //        sb.Append(",");
+                //    sb.Append(idx.ToString());
+                //}
+                //if (anyWritten)
+                //    writer.WriteElementString("tris", sb.ToString());
 
                 writeFields(s.Fields, writer);
 

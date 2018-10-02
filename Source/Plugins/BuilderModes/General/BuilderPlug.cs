@@ -758,7 +758,8 @@ namespace CodeImp.DoomBuilder.BuilderModes
                 settings.IndentChars = ("\t");
                 settings.OmitXmlDeclaration = true;
 
-                XmlWriter xml = XmlWriter.Create(form.FilePath + ".xml", settings);
+                string path = form.FilePath.EndsWith(".xml") ? form.FilePath : form.FilePath + ".xml";
+                XmlWriter xml = XmlWriter.Create(path, settings);
                 w.write(General.Map.Options.LevelName, General.Map.Map, xml);
                 xml.Flush();
                 xml.Close();

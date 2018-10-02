@@ -24,7 +24,7 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 		{
 			InitializeComponent();
 
-			string name = Path.GetFileNameWithoutExtension(General.Map.FileTitle) + "_" + General.Map.Options.LevelName + ".obj";
+			string name = Path.GetFileNameWithoutExtension(General.Map.FileTitle) + "_" + General.Map.Options.LevelName + ".xml";
 			if(string.IsNullOrEmpty(General.Map.FilePathName)) 
 			{
 				saveFileDialog.FileName = name;
@@ -41,7 +41,7 @@ namespace CodeImp.DoomBuilder.BuilderModes.Interface
 			cbFixScale.Checked = General.Settings.ReadPluginSetting("objgzdoomscale", false);
 			nudScale.Value = (decimal)General.Settings.ReadPluginSetting("objscale", 1.0f);
 
-			this.Text = "Export " + (sectorsCount == -1 ? "whole map" : sectorsCount + (sectorsCount > 1 ? "sectors" : "sector")) + " to Wavefront .obj";
+			this.Text = "Export " + (sectorsCount == -1 ? "whole map" : sectorsCount + (sectorsCount > 1 ? "sectors" : "sector")) + " to XML";
 		}
 
 		#region ================== Events
